@@ -24,7 +24,8 @@ BASE=${BASE_CARD:-omniASR_LLM_1B_v2}
 SRC_REPO=${SRC_REPO:-guruawe/octopus-asr-omniASR-1B-run3}
 DST_REPO=${DST_REPO:-guruawe/octopus-asr-omniASR-1B-v1}
 MAIN_STEP=${MAIN_STEP:-12000}          # best gate checkpoint (gate macro 19.96)
-OTHER_STEPS=${OTHER_STEPS:-20000}      # compared at alpha 0.7 only
+OTHER_STEPS=${OTHER_STEPS:-20000}      # also compared, at OTHER_ALPHAS and 1.0
+OTHER_ALPHAS=${OTHER_ALPHAS:-0.7}
 ALPHAS=${ALPHAS:-0.5 0.7 0.85}         # alpha = weight of the fine-tuned model
 DEV_N=${DEV_N:-100}
 TEST_N=${TEST_N:-0}                    # utterances per language on test (0 = all); fixed seed, same sample for every model
@@ -78,7 +79,7 @@ blend() {   # step alpha
     CK[s$1_a$2]=$out
 }
 for a in $ALPHAS; do blend $MAIN_STEP $a; done
-for s in $OTHER_STEPS; do blend $s 0.7; done
+for s in $OTHER_STEPS; do for a in $OTHER_ALPHAS; do blend $s $a; done; done
 
 # ---------------------------------------------------------------- 4. dev sweep
 score() {   # name split n

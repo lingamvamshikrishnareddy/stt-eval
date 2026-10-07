@@ -24,7 +24,7 @@ BASE=${BASE_CARD:-omniASR_LLM_1B_v2}
 SRC_REPO=${SRC_REPO:-guruawe/octopus-asr-omniASR-1B-run3}
 DST_REPO=${DST_REPO:-guruawe/octopus-asr-omniASR-1B-v1}
 MAIN_STEP=${MAIN_STEP:-12000}          # best gate checkpoint (gate macro 19.96)
-OTHER_STEPS=${OTHER_STEPS:-20000}      # also compared, at OTHER_ALPHAS and 1.0
+OTHER_STEPS=${OTHER_STEPS-20000}      # also compared, at OTHER_ALPHAS and 1.0
 OTHER_ALPHAS=${OTHER_ALPHAS:-0.7}
 ALPHAS=${ALPHAS:-0.5 0.7 0.85}         # alpha = weight of the fine-tuned model
 DEV_N=${DEV_N:-100}

@@ -65,12 +65,14 @@ fi
 declare -A CK
 CK[base]=""
 for s in $MAIN_STEP $OTHER_STEPS; do CK[s${s}_a1.0]="$W/ckpts/step_${s}.pt"; done
+# base weights exported once, then every blend mmaps its inputs and works one tensor at a time (low RAM)
+[ -f "$W/ckpts/base.pt" ] || { log "export base weights ($BASE)"; $PY "$HERE/export_base.py" --card "$BASE" --out "$W/ckpts/base.pt"; }
 blend() {   # step alpha
     local out="$W/blends/s$1_a$2.pt"
     if [ ! -f "$out" ]; then
         log "blend step_$1 alpha=$2"
-        $PY "$HERE/stt_blend.py" --ckpts "$W/ckpts/step_$1.pt" --alpha "$2" --base "$BASE" --out "$out.tmp.pt"
-        mv "$out.tmp.pt" "$out"
+        $PY "$HERE/stt_blend.py" --memory-efficient --base-ckpt "$W/ckpts/base.pt" \
+            --ckpts "$W/ckpts/step_$1.pt" --alpha "$2" --base "$BASE" --out "$out"
     fi
     CK[s$1_a$2]=$out
 }

@@ -146,12 +146,16 @@ def report(a):
     (out / "results/bootstrap.tsv").write_text(
         f"delta\tci_low\tci_high\tp_delta_below_0\tn_boot\n{mm - bm:.4f}\t{lo:.4f}\t{hi:.4f}\t{p_better:.4f}\t{N_BOOT}\n")
 
-    dev = []
+    dev, dev_cols = [], {}
     for d in sorted(res.glob("*_dev")):
         if (d / "summary.tsv").exists():
-            s = pd.read_csv(d / "summary.tsv", sep="\t")
+            s = pd.read_csv(d / "summary.tsv", sep="\t").set_index("language")
             dev.append((d.name[:-4], s.error.mean()))
+            dev_cols[d.name[:-4]] = s.error
     dev.sort(key=lambda x: x[1])
+    order = ["base"] + [n for n, _ in dev if n != "base"]
+    dev_all = pd.DataFrame(dev_cols)[[c for c in order if c in dev_cols]].sort_index()
+    dev_all.to_csv(out / "results/fleurs_dev_all_candidates.tsv", sep="\t", float_format="%.2f")
     n_wer, n_cer = int((cmp_.metric == "WER").sum()), int((cmp_.metric == "CER").sum())
     worse2 = cmp_[cmp_.delta > 2]
 
@@ -189,6 +193,13 @@ def report(a):
         "|---|---|---|---|---|---|",
         *[f"| {l} | {r.metric} | {int(r.n)} | {r.base:.2f} | {r.model:.2f} | {r.delta:+.2f} |"
           for l, r in cmp_.sort_index().iterrows()],
+        "",
+        "### Per language, every candidate (FLEURS dev, 100 utterances per language)",
+        "",
+        "| language | " + " | ".join(f"`{c}`" for c in dev_all.columns) + " |",
+        "|---|" + "---|" * len(dev_all.columns),
+        *[f"| {l} | " + " | ".join(f"{v:.1f}" for v in r.values) + " |" for l, r in dev_all.iterrows()],
+        "| **macro** | " + " | ".join(f"**{v:.2f}**" for v in dev_all.mean().values) + " |",
     ]
     results_md = "\n".join(lines) + "\n"
     (out / "results.md").write_text(results_md)

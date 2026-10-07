@@ -12,7 +12,7 @@ scores base + winner on the full FLEURS **test**, writes a model card and pushes
 (private by default). Each stage resumes after a crash. Settings come from environment variables at the top of the script
 (`WORK`, `ALPHAS`, `DEV_N`, `BATCH`, `PUSH=0`, `PRIVATE=0`, ...).
 
-Needs: CUDA GPU (24 GB is enough), ~100 GB disk, 32 GB RAM (blends are memory-mapped), `fairseq2` + an **editable** install of
+Needs: CUDA GPU (24 GB is enough), 150-200 GB disk, 32 GB RAM (blends are memory-mapped), `fairseq2` + an **editable** install of
 `omnilingual-asr` at `$OMNI_ASR_REPO`.
 
 | file | role |

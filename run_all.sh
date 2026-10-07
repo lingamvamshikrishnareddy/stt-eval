@@ -49,7 +49,7 @@ if repo not in pkg.parents:
     sys.exit(f"omnilingual_asr must be an editable install from {repo} (fine-tuned checkpoints are registered as cards there)")
 EOF
 free=$(df -BG --output=avail "$W" | tail -1 | tr -dc 0-9)
-[ "$free" -lt 80 ] && log "WARNING: only ${free} GB free in $W; ~100 GB recommended"
+[ "$free" -lt 150 ] && log "WARNING: only ${free} GB free in $W; 150-200 GB recommended (FLEURS download peaks at ~40 GB)"
 
 # ---------------------------------------------------------------- 1. fetch checkpoints
 $PY "$HERE/fetch_ckpt.py" --repo "$SRC_REPO" --steps $MAIN_STEP $OTHER_STEPS --out "$W/ckpts"

@@ -27,6 +27,7 @@ MAIN_STEP=${MAIN_STEP:-12000}          # best gate checkpoint (gate macro 19.96)
 OTHER_STEPS=${OTHER_STEPS:-20000}      # compared at alpha 0.7 only
 ALPHAS=${ALPHAS:-0.5 0.7 0.85}         # alpha = weight of the fine-tuned model
 DEV_N=${DEV_N:-100}
+TEST_N=${TEST_N:-0}                    # utterances per language on test (0 = all); fixed seed, same sample for every model
 BATCH=${BATCH:-16}
 TARGET=${TARGET:-19.5}
 PUSH=${PUSH:-1}
@@ -95,8 +96,8 @@ log "winner on dev: $WIN (${CK[$WIN]})"
 [ "$WIN" = base ] && { log "no candidate beats the base model on dev; stopping before test/push"; exit 3; }
 
 # ---------------------------------------------------------------- 6. full test (base + winner only)
-score base test 0
-score "$WIN" test 0
+score base test "$TEST_N"
+score "$WIN" test "$TEST_N"
 
 # ---------------------------------------------------------------- 7. report + model card
 $PY "$HERE/final_report.py" report --res "$W/res" --winner "$WIN" --target "$TARGET" \

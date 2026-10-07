@@ -70,7 +70,7 @@ def report(a):
     worse5 = cmp_[cmp_.delta > 5]
     status = "MET" if mm < a.target else "NOT MET"
     lines = [
-        f"## FLEURS test, {len(cmp_)} languages",
+        f"## FLEURS test, {len(cmp_)} languages, {int(b.n.sum())} utterances",
         "",
         "| | macro error | loops |",
         "|---|---|---|",
